@@ -2,32 +2,36 @@ import paho.mqtt.client as mqtt
 from app import db 
 from app.models.testdata import TestData
 
-broker = 'broker.hivemq.com'
-port = 1883
 
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
-    
-    client.subscribe("test45728")
+class MQTTSubscriber:
+    def __init__(self, app, broker='broker.hivemq.com', port=1883, topic="test45728"):
+        self.app = app
+        self.broker = broker
+        self.port = port
+        self.topic = topic
+        self.client = mqtt.Client()
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
 
-def on_message(client, userdata, msg):
-    payload = msg.payload.decode("utf-8")
-    print(f"Received message: {payload}")
+    def on_connect(self, client, userdata, flags, rc):
+        print("Connected  with result code " + str(rc))
+        client.subscribe(self.topic)
 
-    new_data = TestData(value=payload)  
-    db.session.add(new_data)
-    db.session.commit()
+    def on_message(self, client, userdata, msg):
+        payload = msg.payload.decode("utf-8")
+        print(f"Received message: {payload}")
 
-def start_subscriber():
-    client = mqtt.Client()
-    client.on_connect = on_connect
-    client.on_message = on_message
+        with self.app.app_context():
+            new_data = TestData(value=payload)
+            db.session.add(new_data)
+            db.session.commit()
 
-    # Connect to MQTT broker
-    client.connect(broker, port, 60)
-
-    # Start the MQTT network loop to listen for messages
-    client.loop_forever()
+    def start(self):
+        self.client.connect(self.broker, self.port, 60)
+        self.client.loop_start()
 
 if __name__ == '__main__':
-    start_subscriber()
+    from app import app
+
+    subscriber = MQTTSubscriber(app)
+    subscriber.start()
