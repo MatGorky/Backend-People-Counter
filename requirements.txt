@@ -1,0 +1,6 @@
+Flask
+Flask-RESTX
+Flask-SQLAlchemy
+psycopg2-binary
+alembic
+paho-mqtt
