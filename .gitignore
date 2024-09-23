@@ -1,4 +1,5 @@
 # specific files
+Dockerfile
 config.py
 
 # Byte-compiled / optimized / DLL files
