@@ -1,16 +1,25 @@
 from flask_restx import Resource, Namespace
 from app.models.data_tracker import DataTracker
+from app.utils.auth import require_auth
+from sqlalchemy import func, select, Date, cast, Time, DateTime
+from app import db
 
 api = Namespace('Data Tracker', description='Endpoints to get unhandled mqtt subscriptions')
 
 @api.route('/tracker')
 class DataTrackerResource(Resource):
+    @require_auth
     def get(self):
-        data = DataTracker.query.all()
-        return [{'id': d.id, 'value': d.value} for d in data]
+        data = db.session.execute(
+            select(DataTracker.id, DataTracker.topic, DataTracker.payload)
+        ).all()
+        return data
+
     
 @api.route('/tracker/<string:topic>')
-class DataTrackerResource(Resource):
+class DataTrackerResourceByTopic(Resource):
     def get(self,topic):
-        data = DataTracker.query.filter_by(topic=topic).all()
-        return [{'id': d.id, 'payload': d.payload} for d in data]
+        data = db.session.execute(
+            select(DataTracker.id, DataTracker.topic, DataTracker.payload)
+        ).filter_by(topic=topic).all()
+        return data

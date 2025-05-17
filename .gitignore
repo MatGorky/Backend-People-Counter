@@ -1,6 +1,6 @@
 # specific files
-Dockerfile
-config.py
+#Dockerfile
+#config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

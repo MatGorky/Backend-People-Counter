@@ -4,6 +4,7 @@ from sqlalchemy import func, select, Date, cast, Time, DateTime
 from datetime import datetime, timedelta
 from app import db
 
+
 api = Namespace('Test Data', description='Test Data operations, simulating real data gathered from IOT device via MQTT protocol')
 
 data_by_day = api.model('Data grouped by day', {
@@ -16,16 +17,20 @@ data_by_hour = api.model('Data grouped by hour', {
     'count': fields.Integer(description='The count of tests for that hour')
 })
 
+test_data = api.model('Test Data', {
+    'id': fields.Integer(readOnly=True, description='The unique identifier of a test data'),
+    'value': fields.String(required=True, description='The value of the test data'),
+    'register_time': fields.DateTime(dt_format='iso8601', description='The time the test data was registered')
+})
+
 @api.route('/test')
 class TestDataResource(Resource):
+    @api.marshal_with(test_data, envelope='data')
     def get(self):
         data = db.session.execute(
-            select(
-                    func.date(TestData.register_time).label('day'),
-                    func.count(TestData.id).label('count')
-                )
+            select(TestData.id, TestData.value, TestData.register_time)
         ).all()
-        return [{'id': d.id, 'value': d.value} for d in data]
+        return data
     
         
 

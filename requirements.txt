@@ -1,7 +1,10 @@
 Flask
 Flask-RESTX
 Flask-SQLAlchemy
+SQLAlchemy
 psycopg2-binary
 alembic
 paho-mqtt
 gunicorn
+PyJWT
+flask-cors
