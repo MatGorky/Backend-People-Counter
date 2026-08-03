@@ -5,10 +5,11 @@ from sqlalchemy import MetaData
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
-api = Api(app)
 
 app.config.from_object('app.config.DevelopmentConfig')
+
+CORS(app, origins=app.config['CORS_ORIGINS'])
+api = Api(app)
 
 db = SQLAlchemy(app,metadata=MetaData(naming_convention={
     'pk': 'pk_%(table_name)s',
@@ -21,12 +22,24 @@ db = SQLAlchemy(app,metadata=MetaData(naming_convention={
 print("service started")
 
 #rest api
-from app.apis.testdata import api as test_ns
 from app.apis.data_tracker import api as data_tracker_ns
-api.add_namespace(test_ns)
 api.add_namespace(data_tracker_ns)
 
 #MQTT subscriber
 from app.mqtt import subscriber
-mqtt_subscriber = subscriber.MQTTSubscriber(app,topic = app.config['MQTT_TOPICS'])
-mqtt_subscriber.start()
+if not app.config['MQTT_TOPICS']:
+    print("WARNING: MQTT_TOPICS is empty - the subscriber will receive nothing. "
+          "Topic names are unlisted; set them in .env / deploy env (docs/secrets.md).")
+mqtt_subscriber = subscriber.MQTTSubscriber(
+    app,
+    broker=app.config['MQTT_BROKER_HOST'],
+    port=app.config['MQTT_BROKER_PORT'],
+    topic=app.config['MQTT_TOPICS'],
+    test_topic=app.config['MQTT_TEST_TOPIC'] or None,
+)
+try:
+    mqtt_subscriber.start()
+except Exception as e:
+    # An unreachable broker must not take the REST API down with it.
+    # Proper lifecycle management (separate worker entrypoint) comes with spec-001.
+    print(f"WARNING: MQTT subscriber failed to start: {e}")

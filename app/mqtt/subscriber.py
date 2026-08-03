@@ -6,18 +6,18 @@ import uuid
 
 
 class MQTTSubscriber:
-    def __init__(self, app, broker='broker.hivemq.com', port=1883, topic=["test-data-438",]):
+    def __init__(self, app, broker='broker.hivemq.com', port=1883, topic=None, test_topic=None):
         self.app = app
         self.broker = broker
         self.port = port
-        self.topic = topic
+        self.topic = topic or []
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2,client_id = f'nce-client-{uuid.uuid4()}')
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
 
-        self.topic_handlers = {
-            "test-data-438": self.handle_test_data,
-        }
+        self.topic_handlers = {}
+        if test_topic:
+            self.topic_handlers[test_topic] = self.handle_test_data
 
     def handle_test_data(self, payload):
         with self.app.app_context():
