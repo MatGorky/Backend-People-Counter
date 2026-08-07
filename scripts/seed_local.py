@@ -49,11 +49,13 @@ def main() -> None:
     from app.models.data_tracker import DataTracker  # noqa: E402
 
     random.seed(438)
-    poweron_utc = datetime.now(timezone.utc) - timedelta(days=args.days + 3)
+    # Work in NAIVE UTC throughout — matches how prod stores register_time.
+    now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+    poweron_utc = now_utc - timedelta(days=args.days + 3)
     access = 1000
     rows = []
 
-    start = datetime.now(timezone.utc) - timedelta(days=args.days)
+    start = now_utc - timedelta(days=args.days)
     for day in range(args.days + 1):
         date_utc = start + timedelta(days=day)
         date_local = date_utc + SAO_PAULO_OFFSET
@@ -65,7 +67,7 @@ def main() -> None:
                 minute, second = random.randint(0, 59), random.randint(0, 59)
                 local_naive = date_local.replace(hour=hour_local, minute=minute, second=second, microsecond=0)
                 utc_naive = local_naive - SAO_PAULO_OFFSET  # register_time is naive UTC in prod
-                if utc_naive > datetime.now(timezone.utc).replace(tzinfo=None):
+                if utc_naive > now_utc:
                     continue  # never seed the future
                 device_ts = local_naive.strftime("%Y-%m-%dT%H:%M:%SZ")  # SP local mislabeled Z
                 payload = json.dumps(
