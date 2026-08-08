@@ -60,8 +60,8 @@ project (owner-only access) until purged:
       only the clean deploy's zip remains.
 - [x] Old build logs: bucket copies removed with the folder above; Cloud Logging copies
       expired long ago (30-day retention).
-- [x] Delete container images predating the clean deploy — 35 old versions (2024-09 →
-      2026-02) deletion submitted 2026-08-08; rollback to pre-cleanup revisions is
-      intentionally broken.
+- [x] Delete container images predating the clean deploy — done 2026-08-08: all 35 old
+      versions (2024-09 → 2026-02) deleted, exactly one image (the clean build) remains;
+      rollback to pre-cleanup revisions is intentionally broken.
 - [ ] Local: check editor/backup copies of the old Dockerfile if any
       (`Dockerfile.bak`, OneDrive version history of the repo folder, etc.).
