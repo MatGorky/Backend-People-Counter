@@ -1,6 +1,6 @@
 # Spec 001 — Testing & Code Quality Baseline
 
-**Status:** draft · **Phase:** 2 · **Depends on:** spec-004 (local env) · **Fixes:** DEBT-1/2/3/4/5/7, BUG-1/5/7, SEC-5
+**Status:** ✅ implemented 2026-08-08 (Playwright authed flow pending test-user creds; coverage gate deliberately skipped; Playwright-in-CI deferred — runs locally) · **Phase:** 2 · **Depends on:** spec-004 (local env) · **Fixes:** DEBT-1/2/3/4/5/7, BUG-1/5/7, SEC-5
 
 ## Context
 
