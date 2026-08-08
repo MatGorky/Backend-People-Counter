@@ -26,6 +26,20 @@ the tests written here are the safety net for the later refactors.
 
 ## Design
 
+### Strategy shape (decided 2026-08-07)
+
+- **Frontend: Testing Trophy** — static analysis base (ESLint, strict TS), small unit
+  layer (utils/services), **component-integration tests as the bulk** (RTL-rendered
+  pages with mocked network), thin Playwright e2e top.
+- **Backend: Honeycomb** — implementation-detail tests minimized, **integrated tests as
+  the bulk**: the service is exercised through its real interfaces against real
+  infrastructure (Flask test client + real Postgres from the compose stack — the SQL is
+  Postgres-only, so a mocked DB proves nothing; MQTT handlers fed recorded real
+  payloads). Unit tests only for genuinely pure logic (spec-002 parser, time
+  normalization, dedupe). Thin e2e top.
+- The two models converge at the top: Playwright driving the real frontend against the
+  full local stack is the shared e2e layer of both.
+
 ### Backend restructure
 
 ```

@@ -53,14 +53,15 @@ values go into an `env_file` for compose/systemd on NCE servers.
 The old Dockerfile baked both secrets into build artifacts. They persist inside the GCP
 project (owner-only access) until purged:
 
-- [ ] Deploy once with the clean Dockerfile + `--env-vars-file` (removes secrets from the
-      *serving* image; do this first — the current revision still needs the old image).
-- [ ] Purge old source uploads: `gsutil ls gs://matgorky_cloudbuild/source/` → delete
-      tarballs from before the clean deploy (they embed the old baked-in configuration).
-- [ ] Purge old build logs in the same bucket (`log-*.txt`) — classic Docker builds echo
-      `ENV` lines into logs. (Cloud Logging copies expire in 30 days on their own.)
-- [ ] Delete container images predating the clean deploy (Artifact Registry / Container
-      Registry) — their image config embeds the old configuration. This intentionally
-      breaks rollback to pre-cleanup revisions.
-- [ ] Local: old Dockerfile is already rewritten; check editor/backup copies if any
+- [x] Deploy once with the clean Dockerfile + `--env-vars-file` — done 2026-08-08
+      (revision `biblioteca-nce-back-00034-pd2`).
+- [x] Purge old source uploads — done 2026-08-08: both `run-sources-*` (14 zips) and the
+      legacy `*_cloudbuild/source/` bucket (all tarballs, 2024-09 → 2025-05) emptied;
+      only the clean deploy's zip remains.
+- [x] Old build logs: bucket copies removed with the folder above; Cloud Logging copies
+      expired long ago (30-day retention).
+- [x] Delete container images predating the clean deploy — 35 old versions (2024-09 →
+      2026-02) deletion submitted 2026-08-08; rollback to pre-cleanup revisions is
+      intentionally broken.
+- [ ] Local: check editor/backup copies of the old Dockerfile if any
       (`Dockerfile.bak`, OneDrive version history of the repo folder, etc.).

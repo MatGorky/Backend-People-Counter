@@ -1,0 +1,11 @@
+# Files never uploaded to Cloud Build (source deploys).
+.gcloudignore
+.git
+#!include:.gitignore
+
+# Belt and suspenders — these are already gitignored, but never upload them:
+.env
+.env.*
+deploy/prod.env.yaml
+.claude/
+__pycache__/
