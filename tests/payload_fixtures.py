@@ -4,6 +4,7 @@ Shapes match production reality documented in docs/current-state.md §6:
 the 2024-era payload lacks pulse_ton/pulse_toff; time fields carry São Paulo
 local time mislabeled with a Z suffix.
 """
+
 import json
 
 PAYLOAD_2026 = json.dumps(

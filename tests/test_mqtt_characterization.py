@@ -1,4 +1,5 @@
 """Characterization of MQTT message handling — handlers called directly, no broker."""
+
 from types import SimpleNamespace
 
 from sqlalchemy import select
@@ -73,6 +74,20 @@ class TestDefaultHandler:
         sub = make_subscriber(app)
         sub.on_message(None, None, msg("unit-json", fx.OVERSIZE_TEXT))
         assert all_rows(app, database, DataTracker) == []
+
+
+class TestResilience:
+    def test_recovers_after_oversize_failure(self, app, database):
+        """A failed insert must not poison handling of the next message (BUG-2 family)."""
+        from app.models.data_tracker import DataTracker
+
+        sub = make_subscriber(app)
+        sub.on_message(None, None, msg("unit-json", fx.OVERSIZE_TEXT))
+        sub.on_message(None, None, msg("unit-json", fx.PAYLOAD_2026))
+
+        rows = all_rows(app, database, DataTracker)
+        assert len(rows) == 1
+        assert '"access_count": 14007' in rows[0].payload
 
 
 class TestTestTopicHandler:

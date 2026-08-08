@@ -7,15 +7,16 @@ matching what app/utils/auth.py verifies. Usage:
     curl -H "Authorization: Bearer $(python scripts/dev_token.py)" \
          http://localhost:8080/data-tracker/daily/2026-08-01
 """
+
 import os
 import sys
 import time
 import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from scripts.env_loader import load_dotenv  # noqa: E402
-
 import jwt  # noqa: E402
+
+from scripts.env_loader import load_dotenv  # noqa: E402
 
 
 def main() -> None:

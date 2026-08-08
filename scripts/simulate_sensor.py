@@ -11,18 +11,20 @@ Examples:
     python scripts/simulate_sensor.py --duplicate-every 7 --gap-every 11 --reset-at 30
     python scripts/simulate_sensor.py --garbage-every 9
 """
+
 import argparse
 import json
 import os
 import random
 import sys
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import paho.mqtt.client as mqtt  # noqa: E402
+
 from scripts.env_loader import load_dotenv  # noqa: E402
 
-import paho.mqtt.client as mqtt  # noqa: E402
 
 # Real topic names are unlisted (public repo); set MQTT_TOPIC_JSON in .env.
 # The placeholder default matches .env.example for a self-contained demo.
@@ -40,7 +42,7 @@ def device_timestamp(dt_utc: datetime) -> str:
 
 
 def build_payload(device_id: str, access_count: int, poweron: datetime) -> str:
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     return json.dumps(
         {
             "device_id": device_id,
@@ -65,10 +67,21 @@ def main() -> None:
     parser.add_argument("--interval", type=float, default=1.0, help="seconds between messages")
     parser.add_argument("--device", default="sensor-1")
     parser.add_argument("--start-count", type=int, default=14100, help="initial access_count")
-    parser.add_argument("--duplicate-every", type=int, default=0, help="re-publish every Nth message (delivery dup)")
-    parser.add_argument("--gap-every", type=int, default=0, help="skip counter values every Nth message (lost msg)")
-    parser.add_argument("--reset-at", type=int, default=0, help="reset access_count to 1 at message N (device reboot)")
-    parser.add_argument("--garbage-every", type=int, default=0, help="publish a non-JSON payload every Nth message")
+    parser.add_argument(
+        "--duplicate-every", type=int, default=0, help="re-publish every Nth message (delivery dup)"
+    )
+    parser.add_argument(
+        "--gap-every", type=int, default=0, help="skip counter values every Nth message (lost msg)"
+    )
+    parser.add_argument(
+        "--reset-at",
+        type=int,
+        default=0,
+        help="reset access_count to 1 at message N (device reboot)",
+    )
+    parser.add_argument(
+        "--garbage-every", type=int, default=0, help="publish a non-JSON payload every Nth message"
+    )
     args = parser.parse_args()
 
     host = os.environ.get("MQTT_BROKER_HOST", "localhost")
@@ -79,14 +92,14 @@ def main() -> None:
     client.connect(host, port, 60)
     client.loop_start()
 
-    poweron = datetime.now(timezone.utc) - timedelta(days=2)
+    poweron = datetime.now(UTC) - timedelta(days=2)
     access = args.start_count
     published = 0
 
     for i in range(1, args.count + 1):
         if args.reset_at and i == args.reset_at:
             access = 0
-            poweron = datetime.now(timezone.utc)
+            poweron = datetime.now(UTC)
             print(f"[{i}] -- simulating device reset (counter back to 1) --")
 
         if args.gap_every and i % args.gap_every == 0:

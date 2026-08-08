@@ -3,6 +3,7 @@
 Environment is configured BEFORE the app is imported. Uses a dedicated
 `people_counter_test` database on the compose Postgres so dev seed data survives.
 """
+
 import os
 import time
 import uuid

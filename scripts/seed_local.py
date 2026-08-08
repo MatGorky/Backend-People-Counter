@@ -9,12 +9,13 @@ SAFETY: refuses to run against anything that isn't localhost/127.0.0.1.
     python scripts/seed_local.py             # 60 days ending today
     python scripts/seed_local.py --days 90
 """
+
 import argparse
 import json
 import os
 import random
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scripts.env_loader import load_dotenv  # noqa: E402
@@ -45,12 +46,14 @@ def main() -> None:
 
     topic = os.environ.get("MQTT_TOPIC_JSON", "demo-sensor-json")
 
-    from app import app, db  # noqa: E402  (import starts the app; broker guard handles no-MQTT)
+    from app import create_app, db  # noqa: E402
     from app.models.data_tracker import DataTracker  # noqa: E402
+
+    app = create_app()
 
     random.seed(438)
     # Work in NAIVE UTC throughout — matches how prod stores register_time.
-    now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+    now_utc = datetime.now(UTC).replace(tzinfo=None)
     poweron_utc = now_utc - timedelta(days=args.days + 3)
     access = 1000
     rows = []
@@ -61,11 +64,15 @@ def main() -> None:
         date_local = date_utc + SAO_PAULO_OFFSET
         for hour_local in range(6, 21):
             weight = hourly_weight(hour_local, date_local.weekday())
-            passages = random.randint(0, 2) if weight == 0 else int(random.gauss(weight * 2, weight * 0.6))
+            passages = (
+                random.randint(0, 2) if weight == 0 else int(random.gauss(weight * 2, weight * 0.6))
+            )
             for _ in range(max(0, passages)):
                 access += 1
                 minute, second = random.randint(0, 59), random.randint(0, 59)
-                local_naive = date_local.replace(hour=hour_local, minute=minute, second=second, microsecond=0)
+                local_naive = date_local.replace(
+                    hour=hour_local, minute=minute, second=second, microsecond=0
+                )
                 utc_naive = local_naive - SAO_PAULO_OFFSET  # register_time is naive UTC in prod
                 if utc_naive > now_utc:
                     continue  # never seed the future
@@ -74,7 +81,9 @@ def main() -> None:
                     {
                         "device_id": args.device,
                         "time_system": device_ts,
-                        "time_poweron": (poweron_utc + SAO_PAULO_OFFSET).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        "time_poweron": (poweron_utc + SAO_PAULO_OFFSET).strftime(
+                            "%Y-%m-%dT%H:%M:%SZ"
+                        ),
                         "time_detected": device_ts,
                         "access_count": access,
                         "people_count": access // 2,

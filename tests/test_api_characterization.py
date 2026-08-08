@@ -4,6 +4,7 @@ Pins today's semantics, including known quirks kept on purpose until spec-002:
 counts include ALL topics (BUG-6), zero-count buckets are absent (BUG-10), and
 times are bucketed in America/Sao_Paulo derived from naive-UTC register_time.
 """
+
 from datetime import datetime
 
 

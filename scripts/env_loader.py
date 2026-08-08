@@ -3,14 +3,13 @@
 Loads KEY=VALUE lines from the repo-root .env into os.environ (existing environment
 variables win). Not a general dotenv implementation — just enough for local dev.
 """
+
 import os
 
 
 def load_dotenv(path: str | None = None) -> None:
     if path is None:
-        path = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"
-        )
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env")
     if not os.path.exists(path):
         return
     with open(path, encoding="utf-8") as f:
