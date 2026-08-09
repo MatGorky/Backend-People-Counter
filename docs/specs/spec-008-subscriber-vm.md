@@ -86,6 +86,11 @@ User → Cloud Run biblioteca-nce-back (API only, min=0, CPU throttled)  → Clo
 
 - ~~Outbound path for the VM~~ — **decided 2026-08-03: (a) static external IPv4 on the
   VM** (~$0–3.7/mo accepted by owner; verify possible free-tier exemption on first bill).
+  *2026-08 finding:* a true $0 path exists — the broker has AAAA records (IPv6 is free)
+  + Cloud SQL private IP for the DB leg — but GitHub is IPv4-only, breaking the VM's
+  `git pull` update flow (would need scp-based updates). Revisit only if the first bill
+  charges the IP, or together with appendix option C. Note: static-while-attached costs
+  the same as ephemeral; the reservation itself adds nothing.
   Alternatives kept for reference: (b) Cloud NAT (~$1/mo, NAT IP may be billed);
   (c) Cloud SQL private IP for the DB leg (strongest SEC-2 posture) — (c) can still be
   layered on later without changing the VM. The public HiveMQ broker remains the only
