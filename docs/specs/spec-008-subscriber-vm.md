@@ -35,7 +35,9 @@ User → Cloud Run biblioteca-nce-back (API only, min=0, CPU throttled)  → Clo
   restored; API-only entrypoint (gunicorn) no longer starts the subscriber. Cold starts
   of a few seconds are acceptable for an occasionally-opened dashboard.
 - **Networking:** VM needs **outbound only** (MQTT 1883, Postgres 5432). No inbound
-  firewall rules except IAP SSH for admin. Reserve a **static external IPv4** so the DB
+  firewall rules except IAP SSH for admin. *Hardened 2026-08-09:* port 22 restricted to
+  the IAP range (use `gcloud compute ssh --tunnel-through-iap`); RDP rule deleted; the
+  VM runs with no service account (zero cloud-pivot risk). Reserve a **static external IPv4** so the DB
   can pin it (note: in-use external IPv4 costs ~US$3.7/mo unless the free tier exempts
   it — verify on the first bill; alternative: drop the external IP and use Cloud NAT,
   ~US$1/mo at one VM).
