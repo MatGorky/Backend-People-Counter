@@ -1,6 +1,10 @@
 # Spec 003 — Rooms, Devices and User Access
 
-**Status:** draft · **Phase:** 3 (after spec-002) · **Depends on:** spec-001/002/004 · **Fixes:** BUG-5/9, SEC-7 (authorization part)
+**Status:** ✅ implemented 2026-08-09 — room/device/user_room live in prod, seeded
+(library room + its device + owner grant); room-scoped API v2 with 404-policy access
+control and app_metadata admin role; frontend real-rooms flow. Grant-role granularity
+and `passage_event.room_id NOT NULL` tightening remain future refinements. · **Phase:** 3
+(after spec-002) · **Depends on:** spec-001/002/004 · **Fixes:** BUG-5/9, SEC-7 (authorization part)
 
 ## Context
 

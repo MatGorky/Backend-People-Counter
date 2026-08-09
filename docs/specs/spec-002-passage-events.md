@@ -1,6 +1,10 @@
 # Spec 002 — Passage Events: a real table for the real data
 
-**Status:** draft · **Phase:** 3 · **Depends on:** spec-001 (tests), spec-004 (local env) · **Fixes:** BUG-6/10/11, DEBT-6 · **Enables:** spec-003/005/006
+**Status:** ✅ implemented 2026-08-09 — schema + ingestion + backfill live in prod;
+26,246 raw rows → 25,876 events, 0 parse failures (see
+[data-quality-report.md](../data-quality-report.md)). v1 endpoints still serving until
+retirement; `data_tracker` remains the raw audit log. · **Phase:** 3 · **Depends on:**
+spec-001 (tests), spec-004 (local env) · **Fixes:** BUG-6/10/11, DEBT-6 · **Enables:** spec-003/005/006
 
 ## Context
 
