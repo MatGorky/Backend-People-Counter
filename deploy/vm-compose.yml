@@ -1,0 +1,23 @@
+# MQTT worker for the spec-008 VM (and, later, university infra).
+#
+# On the VM:
+#   git clone https://github.com/MatGorky/Backend-People-Counter.git
+#   cd Backend-People-Counter
+#   <create .env with real values — see docs/secrets.md; chmod 600 .env>
+#   docker compose -f deploy/vm-compose.yml up -d --build
+#
+# The image is built on the box from the public repo — no registry auth needed.
+services:
+  mqtt-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: python -m app.mqtt_worker
+    env_file:
+      - ../.env
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
