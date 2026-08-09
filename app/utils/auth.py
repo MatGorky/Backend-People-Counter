@@ -42,6 +42,8 @@ def require_auth(fn=None, roles=None):
                 "id": payload.get("sub"),
                 "email": payload.get("email"),
                 "role": user_role,
+                # App-level role from Supabase app_metadata (set via dashboard; spec-003).
+                "app_role": (payload.get("app_metadata") or {}).get("role"),
             }
             return f(*args, **kwargs)
 
