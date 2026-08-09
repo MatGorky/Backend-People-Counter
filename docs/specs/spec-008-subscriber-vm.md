@@ -1,6 +1,13 @@
 # Spec 008 — Move the MQTT Subscriber to a Free-Tier VM
 
-**Status:** chosen 2026-08-03 (cost appendix option B) · **Phase:** 2.5 · **Depends on:** spec-001 (worker entrypoint) · **Fixes:** COST-1; enables closing SEC-2
+**Status:** ✅ implemented 2026-08-08 — worker on the free-tier VM (Debian 12 + Docker,
+static IPv4, no service account), Cloud Run at min-instances=0 with CPU throttling and
+`MQTT_SUBSCRIBER_IN_WEB=false`. Verified live: reboot auto-recovery; a message published
+from an external machine stored exactly once via the VM while Cloud Run was scaled to
+zero; API cold start ~3s. **SEC-2 note:** Cloud SQL authorized networks intentionally
+unchanged this round — tightening requires the Cloud Run↔DB connector decision (see
+Networking below), tracked as the SEC-2 follow-up. · **Phase:** 2.5 · **Depends on:**
+spec-001 (worker entrypoint) · **Fixes:** COST-1
 
 ## Context
 

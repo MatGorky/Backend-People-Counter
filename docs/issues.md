@@ -50,5 +50,5 @@
 
 | ID | Sev | Issue |
 |---|---|---|
-| COST-1 | 🟠 | `biblioteca-nce-back` runs min=1/max=1 with CPU always allocated purely to keep the MQTT thread alive — an always-on vCPU serving zero HTTP traffic. *Decision 2026-08-03:* fix via [spec-008](specs/spec-008-subscriber-vm.md) (subscriber → free-tier VM, Cloud Run scales to zero). |
+| COST-1 | ✅ | *Resolved 2026-08-08 via [spec-008](specs/spec-008-subscriber-vm.md):* subscriber moved to a free-tier VM worker; `biblioteca-nce-back` now runs min-instances=0 with CPU throttling. Expected saving ≈ US$40–45/mo (verify on the next bill; static IPv4 adds ~US$0–3.7/mo). |
 | COST-2 | 🟡 | Cloud SQL Enterprise instance for a 26k-row dataset; console flags it "under-provisioned" (fleet advice). Right-size it, or consider consolidating storage into Supabase's Postgres (already in the stack) and dropping Cloud SQL entirely. |

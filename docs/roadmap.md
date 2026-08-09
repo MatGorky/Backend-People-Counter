@@ -57,10 +57,11 @@ App factory refactor, SQLAlchemy 2.0 models, pinned deps, pytest suite, Vitest, 
 e2e against the local stack, Storybook, ruff/eslint, GitHub Actions CI. Ends with the
 existing behavior covered by tests — the safety net for Phase 3.
 
-### Phase 2.5 — Subscriber to free-tier VM (spec-008) — **chosen 2026-08-03**
-Move the MQTT worker to an Always-Free `e2-micro` in us-central1; Cloud Run scales to
-zero (kills COST-1, ~US$40–45/mo); pin Cloud SQL authorized networks to the VM's IP
-(closes SEC-2). Needs spec-001's worker entrypoint; otherwise independent of Phase 3+.
+### Phase 2.5 — Subscriber to free-tier VM (spec-008) — ✅ **done 2026-08-08**
+MQTT worker runs on an Always-Free `e2-micro` in us-central1; Cloud Run scales to zero
+(kills COST-1, ~US$40–45/mo). Verified end-to-end incl. reboot recovery and
+single-delivery while the web service was scaled to zero. SEC-2 network tightening
+deferred to a follow-up (needs the Cloud Run↔DB connector decision, see spec-008).
 
 ### Phase 3 — Real data model (spec-002, then spec-003)
 `passage_event` table + parser + dedupe + backfill of the 25,970 historical events;

@@ -38,6 +38,11 @@ Nowhere else. Specifically **never in**: Dockerfiles, source code, commits, docs
 screenshots, chat sessions, CI logs. The university-infra future maps 1:1: the same
 values go into an `env_file` for compose/systemd on NCE servers.
 
+**Worker VM (spec-008):** the VM's `~/Backend-People-Counter/.env` (chmod 600) is
+provisioned over `gcloud compute scp` from a locally generated minimal file — DB URI +
+MQTT settings only; the JWT secret never goes to the VM (the worker doesn't verify
+tokens). Re-provision the same way after any credential change.
+
 ## Rules
 
 - The Dockerfile carries zero configuration; the app reads everything from env at runtime.
