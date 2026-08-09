@@ -15,7 +15,5 @@ class UserRoom(db.Model):
 
     user_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
     room_id: Mapped[int] = mapped_column(ForeignKey("room.id"), primary_key=True)
-    granted_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    granted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     granted_by: Mapped[UUID | None] = mapped_column(PG_UUID(as_uuid=True))

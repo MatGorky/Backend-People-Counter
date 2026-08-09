@@ -11,7 +11,15 @@ logger = logging.getLogger(__name__)
 
 
 class MQTTSubscriber:
-    def __init__(self, app, broker="broker.hivemq.com", port=1883, topic=None, test_topic=None):
+    def __init__(
+        self,
+        app,
+        broker="broker.hivemq.com",
+        port=1883,
+        topic=None,
+        test_topic=None,
+        json_topic=None,
+    ):
         self.app = app
         self.broker = broker
         self.port = port
@@ -26,6 +34,9 @@ class MQTTSubscriber:
         self.topic_handlers = {}
         if test_topic:
             self.topic_handlers[test_topic] = self.handle_test_data
+        if json_topic:
+            self.topic_handlers[json_topic] = self.handle_json
+        self._json_topic = json_topic
 
     def handle_test_data(self, payload):
         with self.app.app_context():
@@ -37,6 +48,22 @@ class MQTTSubscriber:
         with self.app.app_context():
             db.session.add(DataTracker(topic=topic, payload=payload))
             db.session.commit()
+
+    def handle_json(self, payload):
+        """Passage pipeline (spec-002): raw log + parsed passage_event, atomic.
+        One retry on transient connection errors so a dropped pooled connection
+        doesn't lose the message (BUG-2 family)."""
+        from sqlalchemy.exc import OperationalError
+
+        from app.services.ingestion import ingest_json_message
+
+        with self.app.app_context():
+            try:
+                ingest_json_message(self._json_topic, payload)
+            except OperationalError:
+                logger.warning("DB connection error during ingest; retrying once")
+                db.session.rollback()
+                ingest_json_message(self._json_topic, payload)
 
     def on_connect(self, client, userdata, flags, reason_code, properties):
         if reason_code == 0:
@@ -77,6 +104,7 @@ def build_subscriber(app) -> MQTTSubscriber:
         port=app.config["MQTT_BROKER_PORT"],
         topic=app.config["MQTT_TOPICS"],
         test_topic=app.config["MQTT_TEST_TOPIC"] or None,
+        json_topic=app.config["MQTT_TOPIC_JSON"] or None,
     )
 
 

@@ -17,6 +17,4 @@ class Room(db.Model):
     timezone: Mapped[str] = mapped_column(
         String(50), default="America/Sao_Paulo", server_default="America/Sao_Paulo"
     )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

@@ -30,9 +30,7 @@ class PassageEvent(db.Model):
     pulse_ton: Mapped[int | None]
     pulse_toff: Mapped[int | None]
     raw_id: Mapped[int | None] = mapped_column(ForeignKey("data_tracker.id"), unique=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
         Index("ix_passage_event_room_occurred", "room_id", "occurred_at"),

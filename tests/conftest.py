@@ -103,6 +103,52 @@ def auth_headers(make_token):
 
 
 @pytest.fixture()
+def make_room(app, database):
+    def _make(name="Sala Teste", slug=None, tz="America/Sao_Paulo"):
+        from app.models.room import Room
+
+        with app.app_context():
+            room = Room(name=name, slug=slug or f"room-{uuid.uuid4().hex[:8]}", timezone=tz)
+            database.session.add(room)
+            database.session.commit()
+            database.session.refresh(room)
+            database.session.expunge(room)
+        return room
+
+    return _make
+
+
+@pytest.fixture()
+def make_device(app, database, make_room):
+    def _make(device_id="unit-sensor", room=None):
+        from app.models.device import Device
+
+        if room is None:
+            room = make_room()
+        with app.app_context():
+            device = Device(id=device_id, room_id=room.id)
+            database.session.add(device)
+            database.session.commit()
+            database.session.refresh(device)
+            database.session.expunge(device)
+        return device
+
+    return _make
+
+
+@pytest.fixture()
+def grant_access(app, database):
+    def _grant(user_id: str, room_id: int):
+        from app.models.user_room import UserRoom
+
+        with app.app_context():
+            database.session.add(UserRoom(user_id=user_id, room_id=room_id))
+            database.session.commit()
+
+    return _grant
+
+
+@pytest.fixture()
 def insert_row(app, database):
     """Insert a data_tracker row with a chosen naive-UTC register_time."""
 
