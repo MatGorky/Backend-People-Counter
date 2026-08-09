@@ -65,7 +65,12 @@ def database(app):
     from app import db
 
     with app.app_context():
-        db.session.execute(text("TRUNCATE data_tracker, test_data RESTART IDENTITY"))
+        db.session.execute(
+            text(
+                "TRUNCATE data_tracker, test_data, passage_event, user_room, device, room "
+                "RESTART IDENTITY CASCADE"
+            )
+        )
         db.session.commit()
     yield db
 
