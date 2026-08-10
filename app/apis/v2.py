@@ -106,6 +106,32 @@ class YearlyPassages(Resource):
         return passages_v2.yearly(g.room, year, resolution)
 
 
+@rooms_ns.route("/<int:room_id>/reports/passages.pdf")
+class PassagesReportPdf(Resource):
+    @require_auth()
+    @require_room_access
+    def get(self, room_id):
+        from flask import Response
+
+        from app.services import pdf_report, reports
+
+        start = _parse_date(request.args.get("start"), "%Y-%m-%d", "start (YYYY-MM-DD)").date()
+        end = _parse_date(request.args.get("end"), "%Y-%m-%d", "end (YYYY-MM-DD)").date()
+        if start > end:
+            abort(400, "start must be <= end")
+        if (end - start).days > MAX_RANGE_DAYS:
+            abort(400, f"Range too large (max {MAX_RANGE_DAYS} days)")
+
+        report = reports.range_report(g.room, start, end)
+        pdf_bytes = pdf_report.build_pdf(report)
+        filename = f"relatorio-{g.room.slug}-{report['start']}-{report['end']}.pdf"
+        return Response(
+            pdf_bytes,
+            mimetype="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+
+
 @rooms_ns.route("")
 class RoomCollection(Resource):
     @require_auth()
