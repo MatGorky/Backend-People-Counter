@@ -1,6 +1,11 @@
 # Spec 007 — Design Improvements
 
-**Status:** draft · **Phase:** 5 (overlaps fine with 4) · **Depends on:** spec-001 (Storybook), spec-003 (rooms in shell) · **Fixes:** DEBT-9
+**Status:** ✅ implemented 2026-08-10 (core) — app shell (nav, room switcher, user menu
+with logout), DataState loading/error+retry/empty on every view, theme-driven shared
+chart component, dark-mode detection fixed, pt-BR MUI + pickers, 401 → sign-out,
+central copy module, Storybook stories for states/chart. Remaining nice-to-haves:
+formal Lighthouse a11y audit, dark-mode toggle decision, NCE logo asset, full string
+migration to the copy module. · **Phase:** 5 · **Depends on:** spec-001 (Storybook), spec-003 (rooms in shell) · **Fixes:** DEBT-9
 
 ## Context
 

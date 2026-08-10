@@ -73,9 +73,9 @@ PDF reports with date-interval filters (reportlab; deviation noted in spec-005) 
 annual visualization (monthly bars + calendar heatmap + year-over-year delta). Bonus
 fix: deep links no longer bounce through /login during session restore.
 
-### Phase 5 — Design (spec-007)
-App shell, navigation, states, theming — developed against Storybook, verified with
-Playwright.
+### Phase 5 — Design (spec-007) — ✅ **done 2026-08-10** (core)
+App shell with logout, four-state data views, theme consolidation (dark-mode bug fixed),
+pt-BR everywhere, session-expiry handling. Residual nice-to-haves listed in the spec.
 
 ## Decision points (need your call, none block Phase 0/1)
 
