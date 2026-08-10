@@ -68,9 +68,10 @@ deferred to a follow-up (needs the Cloud Run↔DB connector decision, see spec-0
 rooms/devices/user-access schema and authorization; new room-scoped API; frontend
 switches over; `data_tracker` demoted to raw ingest log.
 
-### Phase 4 — Features (spec-005, spec-006)
-PDF reports with date-interval filters; annual visualization. Both sit on the Phase 3
-model.
+### Phase 4 — Features (spec-005, spec-006) — ✅ **done 2026-08-10**
+PDF reports with date-interval filters (reportlab; deviation noted in spec-005) and the
+annual visualization (monthly bars + calendar heatmap + year-over-year delta). Bonus
+fix: deep links no longer bounce through /login during session restore.
 
 ### Phase 5 — Design (spec-007)
 App shell, navigation, states, theming — developed against Storybook, verified with

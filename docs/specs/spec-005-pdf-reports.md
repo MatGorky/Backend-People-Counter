@@ -1,6 +1,12 @@
 # Spec 005 — PDF Passage Reports
 
-**Status:** draft · **Phase:** 4 · **Depends on:** spec-002 (passage data + range endpoint), spec-003 (room scoping)
+**Status:** ✅ implemented 2026-08-10 — **with one deviation:** rendered with
+**reportlab** instead of WeasyPrint (WeasyPrint requires GTK system libraries, breaking
+the run-on-host rule on the Windows dev machine and portability; reportlab installs from
+wheels everywhere). Endpoint `GET /api/v2/rooms/<id>/reports/passages.pdf?start&end`
+with pt-BR KPI grid, two charts, paginated daily table, in-range loss estimation
+footer; frontend export dialog with presets. CSV add-on and logo asset remain open. ·
+**Phase:** 4 · **Depends on:** spec-002 (passage data + range endpoint), spec-003 (room scoping)
 
 ## Context
 

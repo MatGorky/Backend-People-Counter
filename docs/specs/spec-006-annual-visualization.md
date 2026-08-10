@@ -1,6 +1,10 @@
 # Spec 006 — Annual Visualization
 
-**Status:** draft · **Phase:** 4 · **Depends on:** spec-002 (yearly endpoint), spec-003 (room scoping)
+**Status:** ✅ implemented 2026-08-10 — `/yearly/:roomId`: year picker (2024+), monthly
+bars, custom SVG calendar heatmap (Storybook stories), KPI cards with previous-year
+delta, pt-BR throughout; wired into daily/monthly navigation. Two-year overlay remains
+an open idea. Side effect: fixed the app-wide deep-link auth bounce (session-restore
+gate in App). · **Phase:** 4 · **Depends on:** spec-002 (yearly endpoint), spec-003 (room scoping)
 
 ## Context
 
