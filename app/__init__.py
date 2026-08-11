@@ -12,7 +12,7 @@ def create_app(config_object: str = "app.config.Config") -> Flask:
     app = Flask(__name__)
     app.config.from_object(config_object)
 
-    CORS(app, origins=app.config["CORS_ORIGINS"])
+    CORS(app, origins=app.config["CORS_ORIGINS"], expose_headers=["Content-Disposition"])
     db.init_app(app)
 
     api = Api(app, title="People Counter API", doc="/")
